@@ -148,3 +148,58 @@ analyze_DCShift <- function(epoch, fs=1000){
 
 
 }
+
+#' compute HFO analysis
+#'
+#' @param hfoPow Matrix of mean HFO power. the row names are the electrode names and the column names are the time points
+#'
+#' @return A HFO power object analysis
+#' @export
+#'
+#' @examples
+#' data("pt01EcoG")
+analyze_hfoPow <- function(hfoPow){
+
+  maxHfoPow=max(hfoPow)
+  threshold=maxHfoPow*0.1
+  elecNum<-nrow(hfoPow)
+
+  testHfo<-vector(mode="numeric", length=elecNum)
+  lengthHfo<-vector(mode="numeric", length=elecNum)
+  maxHfo<-vector(mode="numeric", length=elecNum)
+  startHfo<-vector(mode="numeric", length=elecNum)
+
+  startHfo[1:elecNum]=NaN
+
+  fsHfomap=ncol(hfoBandPow$pow)/(powTimeWindow[2]-powTimeWindow[1])
+  lthfo=1.5*fsHfomap
+
+
+  for(ie in 1:elecNum){
+  #ie<-5
+    sige=hfoBandPow$pow[ie,]
+
+
+    seq<-which(sige>threshold)
+
+    resulthfo<- rle(diff(seq))
+    hfolengthp<-max(resulthfo$length)
+
+    if(hfolengthp>lthfo){
+      testHfo[ie]=1
+      lengthHfo[ie]=hfolengthp
+      maxHfo[ie]=max(sige)
+      startHfo[ie]=seq[1]
+    }
+
+  }
+
+  HFOMetrics(
+    hfoPow=hfoPow,
+    testHfo = testHfo,
+    lengthHfo = lengthHfo,
+    startHfo = startHfo,
+    maxHfo = maxHfo
+  )
+
+}
