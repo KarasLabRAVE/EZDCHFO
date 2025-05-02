@@ -139,6 +139,7 @@ analyze_DCShift <- function(epoch, fs=1000){
   }
 
   DCShift(
+    lowPassTs=lowPassTs,
     testDce = testDce,
     lengthDce = lengthDce,
     startDce = startDce,

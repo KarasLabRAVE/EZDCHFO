@@ -1,12 +1,12 @@
-#' Multitaper Spectrogram functions 
+#' Multitaper Spectrogram functions
 #'
 #' Compute multitaper spectrogram of timeseries data
-#' 
-#' This R script contains the R implementations of the multitaper spectrogram analysis described in the paper "Sleep Neurophysiological Dynamics Through the 
-#' Lens of Multitaper Spectral Analysis". 
+#'
+#' This R script contains the R implementations of the multitaper spectrogram analysis described in the paper "Sleep Neurophysiological Dynamics Through the
+#' Lens of Multitaper Spectral Analysis".
 #' Multitaper spectral estimation, which was developed in the early 1980
 #' s by David Thomson2 and has been shown to have superior statistical properties compared with single-taper spectral estimates
-#' 
+#'
 #' https://github.com/preraulab/multitaper_toolbox
 #'
 #' Results tend to agree with Prerau Lab python implementation of multitaper spectrogram with precision on the order of at most
@@ -47,18 +47,18 @@
 #'epoch <- Epoch(pt01EcoG)
 #' fs=1000
 #' timeNum <- ncol(epoch)
-#'windowParams = c(1, 0.2) 
+#'windowParams = c(1, 0.2)
 #' nwt=floor((timeNum/fs-windowParams[1])/windowParams[2])+1
 #' data   <- vector(mode="numeric", length=timeNum)
 #' data[1:timeNum]<-dataMat[sozIndex[1],1:timeNum]
 #' # Compute the multitaper spectrogram
 #' results = multitaperSpectrogramR(data, fs, frequencyRange, timeBandwidth, numTapers, windowParams, minNfft, weighting, detrendOpt, parallel, numWorkers,
 #'                                  plotOn, verbose, xyflip)
-multitaperSpectrogramR <- function(data, fs, frequencyRange=c(0.5,250), timeBandwidth=3, numTapers=5, windowParams=c(1,0.2),
+multitaperSpectrogramR <- function(data, fs, frequencyRange=c(80,250), timeBandwidth=3, numTapers=5, windowParams=c(1,0.2),
                                      minNfft=0, weighting='unity', detrendOpt='off', parallel=FALSE, numWorkers=3,
                                      plotOn=FALSE, verbose=FALSE, xyflip=FALSE){
  # returns:
-  
+
   # Process user input
   res <- process_input(data, fs, frequencyRange, timeBandwidth, numTapers, windowParams, minNfft, weighting, detrendOpt,
                        plotOn, verbose)
