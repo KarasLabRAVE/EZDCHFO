@@ -7,19 +7,17 @@ standardizeIEEG <- function(data) {
 #'
 #' @param epoch Matrix or Epoch object. iEEG data matrix or Epoch object. If matrix, the row names are the electrode names and the column names are the time points
 #' @param fs Numeric. frequency of signal iEEG acquisition
+#' @param thresholdDc. Numeric. Threshold amplitude for DC shift
+#' @param lengthDC. Numeric. Threshold in length of DC shift in seconds
+#' @param thresholdEndStartDc. Numeric. Threshold to detect the start of the DC shift
 #'
 #' @return A DC shift analysis object
 #' @export
 #'
 #' @examples
 #' data("pt01EcoG")
-#' ts<-pt01EcoG[,20001:50001]
-#'fs=1000
-#'sozIndex <- attr(pt01EcoG, "sozIndex")
-#'windowParams<-c(0.25,0.1)
-#'epoch <- Epoch(ts)
-#'visuIEEGData(epoch)
-analyze_DCShift <- function(epoch, fs=1000){
+#' TODO
+analyze_DCShift <- function(epoch, fs=1000, thresholdDc=0.5, lengthDc=3, thresholdEndStartDc=0.001){
 
 
   elecNum <- nrow(epoch)
@@ -56,11 +54,12 @@ analyze_DCShift <- function(epoch, fs=1000){
 
   maxelec=max(abs(lowPassTs))
 
-  prCentThreshold=0.5
-  thresholdn=-1.0*maxelec*prCentThreshold
-  thresholdp=maxelec*prCentThreshold
+  # threshold for negative DC Shift
+  thresholdn=-1.0*maxelec*thresholdDc
+  # threshold for positive DC Shift
+  thresholdp=maxelec*thresholdDc
 
-  thresholdEndStart<-0.1*maxelec*0.01
+  thresholdEndStart<-maxelec*thresholdEndStartDc
 
   testDce   <-vector(mode="numeric", length=elecNum)
   lengthDce <-vector(mode="numeric", length=elecNum)
@@ -68,7 +67,7 @@ analyze_DCShift <- function(epoch, fs=1000){
   startDce  <-vector(mode="numeric", length=elecNum)
 
   startDce[1:elecNum]=NaN
-  lt3= 3*fs
+  lengthThres= lengthDc*fs
 
 
   for(ie in 1:elecNum){
@@ -83,8 +82,9 @@ analyze_DCShift <- function(epoch, fs=1000){
     seqdcp<-which(sigedc>thresholdp)
 
     seqnp<-0
-    if(length(seqdcn)>0) seqnp<-seqnp+1
-    if(length(seqdcp)>0) seqnp<-seqnp+2
+    # identify which DC Shift
+    if(length(seqdcn)>0) seqnp<-seqnp+1 # seqnp=1 dc shift negative
+    if(length(seqdcp)>0) seqnp<-seqnp+2 # seqnp=2 dc shift positive
 
     if(seqnp==3){
       if(seqdcp[1]<seqdcn[1]){
@@ -99,7 +99,7 @@ analyze_DCShift <- function(epoch, fs=1000){
     }
 
     if(seqnp>0){
-      if(length(seqdc)>3*fs){
+      if(length(seqdc)>lengthThres){
 
         startdc<-seqdc[1]
         lengthdc<-seqdc[length(seqdc)]-seqdc[1]+1
@@ -153,14 +153,15 @@ analyze_DCShift <- function(epoch, fs=1000){
 #'
 #' @param hfoPow Matrix of mean HFO power. the row names are the electrode names and the column names are the time points
 #' @param thresHfo Numeric. Threshold to detect significant Hfo power intensity
-#' @param lengthHfo Numeric. Minumum sustained HFo to mark electrode as SOZ
+#' @param ltHfoThreshold Numeric. Minumum sustained HFo to mark electrode as SOZ
 #'
 #' @return A HFO power object analysis
 #' @export
 #'
 #' @examples
 #' data("pt01EcoG")
-analyze_hfoPow <- function(hfoPow,thresHfo=0.2,lengthHfo=1.5){
+#' TODO
+analyze_hfoPow <- function(hfoPow,thresHfo=0.2,ltHfoThreshold=1.5){
 
   maxHfoPow=max(hfoPow)
   threshold=maxHfoPow*thresHfo
@@ -174,7 +175,7 @@ analyze_hfoPow <- function(hfoPow,thresHfo=0.2,lengthHfo=1.5){
   startHfo[1:elecNum]=NaN
 
   fsHfomap=ncol(hfoBandPow$pow)/(powTimeWindow[2]-powTimeWindow[1])
-  lthfo=lengthHfo*fsHfomap
+  ltHfo=ltHfoThreshold*fsHfomap
 
 
   for(ie in 1:elecNum){
@@ -187,7 +188,7 @@ analyze_hfoPow <- function(hfoPow,thresHfo=0.2,lengthHfo=1.5){
     resulthfo<- rle(diff(seq))
     hfolengthp<-max(resulthfo$length)
 
-    if(hfolengthp>lthfo){
+    if(hfolengthp>ltHfo){
       testHfo[ie]=1
       lengthHfo[ie]=hfolengthp
       maxHfo[ie]=max(sige)
