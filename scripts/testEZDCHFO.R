@@ -11,7 +11,7 @@ visuIEEGData(epoch)
 
 pt01DCShift<-analyze_DCShift(epoch)
 
-lowPassTs<-pt01DCShift@lowPassTs
+lowPassTs<-pt01DCShift@lowPassTs[c(5,6,10),]
 
 epochLow <- Epoch(lowPassTs)
 visuIEEGData(epochLow)
@@ -38,40 +38,4 @@ colnames(hfoPow)<-startTimes
 
 pt01HFO<-analyze_hfoPow(hfoPow)
 
-#
-# maxHfoPow=max(hfoBandPow$pow)
-# threshold=maxHfoPow*0.1
-# elecNum<-nrow(ts)
-#
-#
-# testHfo<-vector(mode="numeric", length=elecNum)
-# lengthHfo<-vector(mode="numeric", length=elecNum)
-# maxHfo<-vector(mode="numeric", length=elecNum)
-# startHfo<-vector(mode="numeric", length=elecNum)
-#
-# startHfo[1:elecNum]=NaN
-#
-# fsHfomap=ncol(hfoBandPow$pow)/(powTimeWindow[2]-powTimeWindow[1])
-# lthfo=1.5*fsHfomap
-#
-#
-# for(ie in 1:elecNum){
-# #ie<-5
-#   sige=hfoBandPow$pow[ie,]
-#
-#
-#   seq<-which(sige>threshold)
-#
-#   resulthfo<- rle(diff(seq))
-#   hfolengthp<-max(resulthfo$length)
-#
-#   if(hfolengthp>lthfo){
-#     testHfo[ie]=1
-#     lengthHfo[ie]=hfolengthp
-#     maxHfo[ie]=max(sige)
-#     startHfo[ie]=seq[1]
-#   }
-#
-# }
-#
-# pt01HFO<-analyze_HFO(hfoBandPow$pow)
+

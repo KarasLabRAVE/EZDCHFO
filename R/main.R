@@ -152,16 +152,18 @@ analyze_DCShift <- function(epoch, fs=1000){
 #' compute HFO analysis
 #'
 #' @param hfoPow Matrix of mean HFO power. the row names are the electrode names and the column names are the time points
+#' @param thresHfo Numeric. Threshold to detect significant Hfo power intensity
+#' @param lengthHfo Numeric. Minumum sustained HFo to mark electrode as SOZ
 #'
 #' @return A HFO power object analysis
 #' @export
 #'
 #' @examples
 #' data("pt01EcoG")
-analyze_hfoPow <- function(hfoPow){
+analyze_hfoPow <- function(hfoPow,thresHfo=0.2,lengthHfo=1.5){
 
   maxHfoPow=max(hfoPow)
-  threshold=maxHfoPow*0.1
+  threshold=maxHfoPow*thresHfo
   elecNum<-nrow(hfoPow)
 
   testHfo<-vector(mode="numeric", length=elecNum)
@@ -172,7 +174,7 @@ analyze_hfoPow <- function(hfoPow){
   startHfo[1:elecNum]=NaN
 
   fsHfomap=ncol(hfoBandPow$pow)/(powTimeWindow[2]-powTimeWindow[1])
-  lthfo=1.5*fsHfomap
+  lthfo=lengthHfo*fsHfomap
 
 
   for(ie in 1:elecNum){
