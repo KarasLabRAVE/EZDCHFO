@@ -19,15 +19,17 @@ standardizeIEEG <- function(data) {
 #' TODO
 analyze_DCShift <- function(epoch, fs=1000, thresholdDc=0.5, lengthDc=3, thresholdEndStartDc=0.001){
 
-
-  elecNum <- nrow(epoch)
-  timeNum <- ncol(epoch)
+  data<-tblData(epoch)
+  elecNames <- rownames(data)
+  times <- as.numeric(colnames(data))
+  elecNum <- length(elecNames)
+  timeNum <- length(times)
 
   # DC shift analysis
 
   sige   <- vector(mode="numeric", length=timeNum)
 
-  lowPassTs=epoch$data
+  lowPassTs<-data
 
   # band pass filter DC
   fpass <- 1 # filter everything above 1Hz
@@ -37,17 +39,12 @@ analyze_DCShift <- function(epoch, fs=1000, thresholdDc=0.5, lengthDc=3, thresho
 
   for(ie in 1:elecNum){
     #ie<-1
-    sige=epoch$data[ie,]
+    sige=lowPassTs[ie,]
     sigedc=signal::filter(but,sige)
-    lowPassTs[ie,1:timeNum]<-sigedc
+    lowPassTs[ie,]<-sigedc
 
   }
 
-  rownames(lowPassTs)<-rownames(ts)
-  colnames(lowPassTs)<-colnames(ts)
-
-  epochLow <- Epoch(lowPassTs)
-  visuIEEGData(epochLow)
 
 
   lt2=2*fs

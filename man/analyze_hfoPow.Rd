@@ -21,4 +21,5 @@ compute HFO analysis
 }
 \examples{
 data("pt01EcoG")
+TODO
 }
