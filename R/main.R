@@ -203,3 +203,27 @@ analyze_hfoPow <- function(hfoPow,thresHfo=0.2,ltHfoThreshold=1.5){
   )
 
 }
+
+#' Title  compute cooccurrence index of DC Shift and HFO
+#'
+#' @param testDce Numeric. DC shift is detected on electrodes with binary value 1
+#' @param testHfo Numeric. Hfo shift is detected on electrodes with binary value 1
+#'
+#' @return electrode indices of coocurrence
+#' @export
+#'
+#' @examples
+#' indexCooc<-coocurrenceDCHfo(testDce,testHfo)
+coocurrenceDCHFO<-function(testDce,testHfo){
+
+  indexDce<-which(testDce==1)
+  indexHfo<-which(testHfo==1)
+
+  matchDCHFO<-match(indexDce,indexHfo)
+  non_na_vec<-which(!is.na(matchDCHFO))
+
+  indexMatch<-indexHfo[matchDCHFO]
+
+  indexMatch
+
+}

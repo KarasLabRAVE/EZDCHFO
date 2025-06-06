@@ -59,4 +59,10 @@ colnames(hfoPow)<-startTimes
 
 pt01HFO<-analyze_hfoPow(hfoPow)
 
+print(pt01DCShift$testDce)
+print(pt01HFO$testHfo)
 
+testDce<-pt01DCShift$testDce
+testHfo<-pt01HFO$testHfo
+
+indexCooc<-coocurrenceDCHFO(testDce,testHfo)

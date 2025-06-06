@@ -2,8 +2,6 @@
 
 export(analyze_DCShift)
 export(analyze_hfoPow)
-export(multitaperSpectrogramR)
+export(coocurrenceDCHFO)
 export(plotPLHGHeatmap)
-export(process_spectrogram_params)
-export(visuIEEGData)
 exportMethods(show)
